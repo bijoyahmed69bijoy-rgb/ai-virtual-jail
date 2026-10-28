@@ -51,8 +51,9 @@ Clone the repository:
 ```bash
 git clone https://github.com/bijoyahmed69bijoy-rgb/ai-virtual-jail.git
 pkg install zip
-unzip ai-virtual-jail.zip
 cd ai-virtual-jail
+ls
+unzip ai-virtual-jail.zip
 ```
 
 ## Running Tests
