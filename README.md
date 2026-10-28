@@ -54,6 +54,8 @@ pkg install zip
 cd ai-virtual-jail
 ls
 unzip ai-virtual-jail.zip
+cd ai-virtual-jail
+ls
 ```
 
 ## Running Tests
@@ -63,6 +65,11 @@ Run the project's unit tests with:
 ```bash
 python -m unittest discover -s tests -v
 ```
+run on browser (local)
+```bash
+python3 web/server.py
+```
+browser address: http://127.0.0.1:5000
 
 The test suite can help verify the behavior of implemented
 components, including audit-chain integrity checks.
