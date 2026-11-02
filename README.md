@@ -43,32 +43,34 @@ Requirements
 Installation
 
 Clone the repository:
-
+```
 git clone https://github.com/bijoyahmed69bijoy-rgb/ai-virtual-jail.git
 cd ai-virtual-jail
+``` 
 
 Run the CLI
-
+```
 python main.py
+```
 
 Run the Browser Dashboard
 
 Start the local dashboard server:
-
+```
 python web/server.py
-
+```
 Open this address in your browser:
-
+```
 http://127.0.0.1:5000
-
+```
 Keep Termux running while using the dashboard.
 
 Press "CTRL + C" in Termux to stop the server.
 
 Run Tests
-
+```
 python -m unittest discover -s tests -v
-
+```
 Audit Logging
 
 The project uses SHA-256 hash chaining to make changes to the recorded audit chain detectable during verification.
