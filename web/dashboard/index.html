@@ -1,0 +1,1151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#080b14">
+<title>Test Tower | AI Virtual Jail</title>
+<style>
+:root {
+  color-scheme: dark;
+  --bg: #080b14;
+  --panel: rgba(17, 24, 42, .84);
+  --line: rgba(148, 163, 184, .16);
+  --text: #edf4ff;
+  --muted: #8c9bb5;
+  --cyan: #65f3e5;
+  --violet: #a78bfa;
+  --red: #ff6b87;
+  --green: #6cf5b5;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  background:
+    radial-gradient(ellipse at 15% 0%, #15284a 0, transparent 40%),
+    radial-gradient(ellipse at 95% 35%, #20133e 0, transparent 35%),
+    var(--bg);
+  color: var(--text);
+  font: 15px/1.6 system-ui, sans-serif;
+}
+button { font: inherit; cursor: pointer; }
+button:focus-visible, a:focus-visible {
+  outline: 2px solid var(--cyan);
+  outline-offset: 3px;
+}
+button:disabled { opacity: .5; cursor: wait; }
+.hidden { display: none !important; }
+.muted { color: var(--muted); }
+.eyebrow {
+  color: var(--cyan);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+}
+h1, h2, h3, p { margin-top: 0; }
+h1 { letter-spacing: -1.5px; line-height: 1.1; }
+h2 { font-size: 19px; }
+h3 { font-size: 14px; }
+button, .button {
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: #19243b;
+  color: var(--text);
+  padding: 11px 15px;
+  font-weight: 700;
+  transition: transform .18s, border-color .18s, background .18s;
+}
+button:hover, .button:hover {
+  border-color: var(--cyan);
+  transform: translateY(-1px);
+}
+.primary {
+  color: #061315;
+  background: linear-gradient(110deg, var(--cyan), #a7f3d0);
+  border: 0;
+}
+.danger-btn { border-color: #713449; background: #321927; }
+.safe-btn { border-color: #23634f; background: #102d2a; }
+.card {
+  min-width: 0;
+  padding: 20px;
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  background: var(--panel);
+  box-shadow: 0 18px 50px #00000017;
+  backdrop-filter: blur(14px);
+}
+.grid { display: grid; gap: 15px; }
+.two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.four { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  border: 1px solid var(--line);
+  border-radius: 99px;
+  padding: 5px 10px;
+  font-size: 12px;
+  color: var(--muted);
+}
+.dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--green);
+  display: inline-block;
+  box-shadow: 0 0 12px currentColor;
+}
+#intro {
+  min-height: 100svh;
+  display: grid;
+  place-items: center;
+  padding: 26px;
+  overflow: hidden;
+}
+.hero {
+  width: min(100%, 1050px);
+  display: grid;
+  grid-template-columns: 1.2fr .8fr;
+  align-items: center;
+  gap: 28px;
+}
+.hero-copy h1 {
+  font-size: clamp(42px, 7vw, 78px);
+  margin: 18px 0;
+}
+.gradient {
+  color: transparent;
+  background: linear-gradient(100deg, var(--cyan), #a78bfa 75%);
+  background-clip: text;
+  -webkit-background-clip: text;
+}
+.hero-copy p { max-width: 560px; color: var(--muted); }
+.hero-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 25px; }
+.hero-visual {
+  display: grid;
+  place-items: center;
+  min-height: 340px;
+  perspective: 900px;
+}
+.core {
+  width: 220px;
+  height: 220px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  border: 1px solid #65f3e555;
+  background: radial-gradient(circle, #65f3e51c, #a78bfa0a 60%, transparent 72%);
+  box-shadow: 0 0 70px #65f3e51c, inset 0 0 35px #a78bfa1c;
+  transform: rotateX(14deg);
+  animation: float 5s ease-in-out infinite;
+  position: relative;
+}
+.core:before, .core:after {
+  content: "";
+  position: absolute;
+  inset: -23px;
+  border: 1px solid #65f3e544;
+  border-radius: 50%;
+  transform: rotateX(65deg) rotateZ(25deg);
+}
+.core:after {
+  inset: -44px;
+  border-color: #a78bfa55;
+  transform: rotateX(65deg) rotateZ(-38deg);
+}
+.core-icon { font-size: 65px; filter: drop-shadow(0 0 20px #65f3e5); }
+@keyframes float {
+  0%, 100% { transform: translateY(0) rotateX(14deg); }
+  50% { transform: translateY(-12px) rotateX(14deg); }
+}
+.hero-stats { display: flex; gap: 22px; margin-top: 35px; flex-wrap: wrap; }
+.hero-stats strong { display: block; font-size: 20px; }
+.hero-stats span { color: var(--muted); font-size: 12px; }
+#app { min-height: 100vh; }
+.sidebar {
+  position: fixed;
+  inset: 0 auto 0 0;
+  width: 240px;
+  padding: 23px 15px;
+  border-right: 1px solid var(--line);
+  background: #0a0e19ed;
+  backdrop-filter: blur(20px);
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+}
+.brand { display: flex; align-items: center; gap: 11px; padding: 0 8px; }
+.brand-icon {
+  width: 42px; height: 42px; display: grid; place-items: center;
+  border: 1px solid #65f3e544; border-radius: 14px;
+  background: #65f3e510; font-size: 22px;
+}
+.brand strong { display: block; font-size: 14px; }
+.brand small { color: var(--muted); font-size: 11px; }
+.nav-label { color: #64748b; font-size: 10px; letter-spacing: 2px; padding: 0 12px; }
+.nav { display: grid; gap: 5px; }
+.nav button {
+  display: flex; align-items: center; gap: 11px;
+  text-align: left; background: transparent; border-color: transparent;
+  color: #a9b7ce; padding: 12px; font-weight: 600;
+}
+.nav button.active {
+  color: var(--cyan); background: #65f3e511; border-color: #65f3e525;
+}
+.nav .ico { width: 22px; text-align: center; }
+.sidebar-bottom { margin-top: auto; }
+.main { margin-left: 240px; padding: 28px; max-width: 1600px; }
+.topbar { margin-bottom: 28px; }
+.topbar h1 { font-size: 28px; margin: 0; letter-spacing: -.5px; }
+.page { display: none; }
+.page.active { display: block; animation: appear .25s ease-out; }
+@keyframes appear { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: none; } }
+.metric { padding: 18px; }
+.metric .label { color: var(--muted); font-size: 12px; }
+.metric .number { font-size: 29px; font-weight: 800; margin-top: 8px; }
+.metric .symbol { font-size: 19px; margin-right: 6px; }
+.section-head { margin: 28px 0 13px; }
+.section-head h2 { margin: 0; }
+.action-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.action {
+  padding: 16px; border: 1px solid var(--line); border-radius: 15px;
+  background: #0e1525; min-width: 0;
+}
+.action p { color: var(--muted); font-size: 12px; margin: 5px 0 14px; }
+.action button { width: 100%; }
+.log-list { display: grid; gap: 9px; }
+.log-item {
+  padding: 13px; border: 1px solid var(--line); border-radius: 12px;
+  overflow-wrap: anywhere; background: #0c1220;
+}
+.log-item pre { white-space: pre-wrap; overflow-wrap: anywhere; font-size: 12px; margin: 8px 0 0; color: #aabbd6; }
+.result-box {
+  padding: 15px; border-radius: 13px; background: #070b13;
+  border: 1px solid var(--line); white-space: pre-wrap; overflow-wrap: anywhere;
+  color: var(--cyan); min-height: 60px; font: 13px/1.7 ui-monospace, monospace;
+}
+.progress { height: 7px; background: #202a40; border-radius: 9px; overflow: hidden; margin: 14px 0; }
+.progress span { display: block; height: 100%; width: 0; background: linear-gradient(90deg, var(--cyan), var(--violet)); transition: width .25s; }
+.notice { color: var(--muted); font-size: 12px; }
+.feature { padding: 16px; border: 1px solid var(--line); border-radius: 14px; }
+.feature .big { font-size: 23px; margin-bottom: 8px; }
+@media(max-width:1000px) {
+  .four { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .sidebar { width: 205px; }
+  .main { margin-left: 205px; padding: 20px; }
+  .hero { grid-template-columns: 1fr; text-align: center; }
+  .hero-copy p { margin-inline: auto; }
+  .hero-actions, .hero-stats { justify-content: center; }
+  .hero-visual { min-height: 250px; }
+  .core { transform: scale(.82); }
+}
+@media(max-width:650px) {
+  .sidebar {
+    inset: auto 0 0 0; top: auto; width: 100%; height: auto;
+    padding: 7px 5px calc(7px + env(safe-area-inset-bottom));
+    border-right: 0; border-top: 1px solid var(--line);
+    display: block;
+  }
+  .brand, .nav-label, .sidebar-bottom { display: none; }
+  .nav { display: flex; justify-content: space-around; gap: 2px; }
+  .nav button {
+    flex: 1; display: flex; flex-direction: column; gap: 2px;
+    text-align: center; padding: 7px 2px; font-size: 10px;
+  }
+  .nav .ico { font-size: 18px; width: auto; }
+  .main { margin: 0; padding: 19px 14px 100px; }
+  .topbar h1 { font-size: 23px; }
+  .four { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 9px; }
+  .two, .action-list { grid-template-columns: 1fr; }
+  .card { padding: 15px; border-radius: 16px; }
+  .metric { padding: 13px; }
+  .metric .number { font-size: 23px; }
+  .hero-copy h1 { font-size: 43px; }
+  #intro { padding: 20px; }
+  .hero-visual { min-height: 220px; }
+  .core { transform: scale(.72); }
+}
+@media(prefers-reduced-motion:reduce) {
+  *, *::before, *::after { animation: none !important; scroll-behavior: auto !important; transition: none !important; }
+}
+
+/* Test Lab monitor and responsive controls */
+.lab-heading{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:18px}
+.lab-heading h2{font-size:26px;margin:7px 0}
+.agent-status{display:flex;align-items:center;gap:9px;padding:10px 14px;border:1px solid var(--line);border-radius:99px;background:#0c1724;font-weight:800;font-size:12px;white-space:nowrap}
+.status-light{width:8px;height:8px;display:inline-block;border-radius:50%;background:var(--green);box-shadow:0 0 12px #6cf5b588}
+.agent-status.jailed{color:var(--red);border-color:#ff6b8755}
+.agent-status.jailed .status-light{background:var(--red);box-shadow:0 0 12px #ff6b8788}
+.monitor-shell{padding:0;overflow:hidden;border-color:#65f3e533;background:linear-gradient(145deg,#111b2c,#090e19 75%)}
+.monitor-top,.monitor-footer{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:13px 18px;color:var(--muted);font:700 10px/1.5 ui-monospace,monospace;letter-spacing:1.3px}
+.monitor-brand{display:flex;align-items:center;gap:9px;color:var(--cyan)}
+.monitor-screen{display:grid;grid-template-columns:.65fr 1.35fr;gap:22px;align-items:center;padding:24px;background:radial-gradient(ellipse at 17% 50%,#65f3e511,transparent 50%),#060b13;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.monitor-orb{display:grid;place-items:center;min-height:190px;perspective:700px}
+.orb-core{display:grid;place-items:center;width:126px;height:126px;border:1px solid #65f3e577;border-radius:30%;font-size:48px;color:var(--cyan);background:radial-gradient(circle,#65f3e522,#a78bfa08 70%);box-shadow:0 0 40px #65f3e51c,inset 0 0 30px #65f3e51c;transform:rotateX(18deg) rotateZ(45deg);animation:monitorPulse 4s ease-in-out infinite}
+.orb-core:first-letter{transform:rotateZ(-45deg)}
+@keyframes monitorPulse{0%,100%{box-shadow:0 0 25px #65f3e51c,inset 0 0 20px #65f3e51c}50%{box-shadow:0 0 50px #65f3e544,inset 0 0 35px #65f3e522}}
+.monitor-caption{font:800 10px/1.4 ui-monospace,monospace;letter-spacing:1.6px;color:#8294ad;margin:5px 0}
+.monitor-main{font-size:18px;font-weight:800;overflow-wrap:anywhere;margin-bottom:15px}
+.monitor-decision{font-weight:800;color:var(--cyan);overflow-wrap:anywhere;margin-bottom:12px}
+.monitor-reason{font-size:13px;color:var(--muted);overflow-wrap:anywhere}
+.monitor-meta{display:flex;justify-content:space-between;gap:10px;border-top:1px solid var(--line);padding-top:12px;margin-top:15px;font-size:11px;color:var(--muted)}
+.monitor-meta strong{color:var(--text);overflow-wrap:anywhere}
+.monitor-footer{background:#080d16}
+.monitor-footer .status-light{margin-right:7px}
+.lab-controls{margin-top:16px}
+.prompt-label{display:block;font-size:11px;font-weight:800;letter-spacing:1.4px;color:var(--cyan);margin:12px 0 7px}
+#agent-prompt{width:100%;resize:vertical;min-height:100px;background:#080e19;color:var(--text);border:1px solid var(--line);border-radius:12px;padding:12px;font:14px/1.5 system-ui,sans-serif}
+#agent-prompt:focus{outline:1px solid var(--cyan);border-color:var(--cyan)}
+.prompt-bottom{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-top:12px}
+.cloud-button{font-size:13px;padding:10px 13px}
+.control-buttons{display:grid;gap:9px}
+.control-buttons button{width:100%}
+.action-library-card{padding:15px}
+.action-list{grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}
+.action{padding:12px;border-radius:12px}
+.action h3{font-size:12px;line-height:1.4;overflow-wrap:anywhere}
+.action p{font-size:11px;line-height:1.45}
+.action button{font-size:11px;padding:8px 7px;border-radius:9px}
+@media(max-width:1000px){.monitor-screen{grid-template-columns:.45fr 1.55fr;gap:12px}.action-list{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:650px){.lab-heading{align-items:flex-start;flex-direction:column}.monitor-screen{grid-template-columns:1fr;gap:5px;padding:16px}.monitor-orb{min-height:115px}.orb-core{width:82px;height:82px;font-size:34px}.monitor-main{font-size:16px}.monitor-top,.monitor-footer{padding:11px 13px;font-size:9px}.action-list{grid-template-columns:repeat(2,minmax(0,1fr))}.action-library-card{padding:9px}.prompt-bottom{align-items:stretch}.prompt-bottom button{width:100%}}
+
+
+/* Universal Responsive Cyber UI */
+.action-library-card {
+  padding: 10px;
+  border-color: #65f3e52b;
+  background: linear-gradient(145deg, #101a2a, #080e18);
+}
+.action-library-card .action-list {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 9px;
+}
+.action-library-card .action {
+  min-width: 0;
+  padding: 9px;
+  border: 1px solid #65f3e526;
+  border-radius: 11px;
+  background: linear-gradient(145deg, #111d2d, #090f19);
+  transition: transform .2s ease, border-color .2s ease, box-shadow .2s ease;
+}
+.action-library-card .action:hover {
+  transform: translateY(-2px);
+  border-color: #65f3e588;
+  box-shadow: 0 0 15px #65f3e51c;
+}
+.action-library-card .action h3 {
+  font-size: 11px;
+  line-height: 1.35;
+  margin: 0 0 5px;
+  overflow-wrap: anywhere;
+}
+.action-library-card .action p {
+  font-size: 10px;
+  line-height: 1.4;
+  margin: 4px 0 8px;
+}
+.action-library-card .action button {
+  width: 100%;
+  min-width: 0;
+  min-height: 30px;
+  padding: 6px 5px;
+  font-size: 10px;
+  line-height: 1.25;
+  border-radius: 8px;
+}
+.control-buttons {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+.control-buttons button {
+  min-width: 0;
+  min-height: 34px;
+  padding: 7px 6px;
+  font-size: 11px;
+  line-height: 1.3;
+}
+.control-buttons button:last-child {
+  grid-column: auto;
+}
+#cloud-run-button {
+  box-shadow: 0 0 16px #65f3e522;
+}
+#agent-prompt {
+  box-sizing: border-box;
+  max-width: 100%;
+}
+.monitor-shell {
+  box-shadow: 0 0 25px #65f3e50b, inset 0 0 20px #65f3e505;
+}
+@media (min-width: 1400px) {
+  .action-library-card .action-list {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
+}
+@media (min-width: 651px) and (max-width: 1050px) {
+  .action-library-card .action-list {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .control-buttons {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 650px) {
+  .action-library-card {
+    padding: 7px;
+  }
+  .action-library-card .action-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 7px;
+  }
+  .action-library-card .action {
+    padding: 8px 7px;
+  }
+  .action-library-card .action h3 {
+    font-size: 10px;
+  }
+  .action-library-card .action p {
+    font-size: 9px;
+    margin-bottom: 6px;
+  }
+  .action-library-card .action button {
+    min-height: 29px;
+    font-size: 10px;
+  }
+  .control-buttons {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .control-buttons button {
+    font-size: 10px;
+    padding: 8px 5px;
+  }
+  .prompt-bottom {
+    align-items: stretch;
+  }
+  .prompt-bottom button {
+    width: 100%;
+  }
+}
+
+
+/* Animated Overview Cyber Core */
+.overview-hero {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1.1fr .9fr;
+  align-items: center;
+  gap: 18px;
+  min-height: 310px;
+  overflow: hidden;
+  padding: 24px;
+  background: radial-gradient(ellipse at 76% 50%, #65f3e512, transparent 45%), linear-gradient(135deg, #111c2d, #080e18);
+  border-color: #65f3e52c;
+}
+.overview-copy { position: relative; z-index: 2; }
+.overview-copy h2 { max-width: 460px; font-size: clamp(24px, 3vw, 36px); line-height: 1.12; margin: 12px 0; }
+.overview-copy p { max-width: 430px; line-height: 1.7; }
+.overview-status-row { display: flex; flex-wrap: wrap; gap: 8px; margin: 17px 0; }
+.overview-chip { display: inline-flex; align-items: center; gap: 7px; padding: 7px 10px; border: 1px solid #65f3e52b; border-radius: 99px; background: #07111d; color: #a9c4d4; font-size: 10px; font-weight: 800; letter-spacing: .7px; }
+.overview-visual { position: relative; display: grid; place-items: center; min-height: 260px; overflow: hidden; perspective: 700px; }
+.overview-grid { position: absolute; inset: 8%; opacity: .23; background-image: linear-gradient(#65f3e522 1px, transparent 1px), linear-gradient(90deg, #65f3e522 1px, transparent 1px); background-size: 22px 22px; transform: perspective(250px) rotateX(48deg) rotateZ(-8deg) scale(1.15); mask-image: radial-gradient(ellipse, #000, transparent 72%); }
+.overview-ring { position: absolute; width: 175px; height: 175px; border: 1px solid #65f3e577; border-radius: 50%; box-shadow: 0 0 22px #65f3e512, inset 0 0 22px #65f3e510; }
+.ring-one { transform: rotateX(65deg) rotateZ(0deg); animation: overviewSpin 12s linear infinite; }
+.ring-two { width: 145px; height: 145px; border-color: #a78bfa88; transform: rotateY(65deg); animation: overviewSpinReverse 10s linear infinite; }
+.ring-three { width: 205px; height: 205px; border-style: dashed; border-color: #65f3e533; transform: rotateX(70deg) rotateY(20deg); animation: overviewSpin 22s linear infinite; }
+.overview-core { position: relative; z-index: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; width: 102px; height: 102px; border: 1px solid #65f3e5aa; border-radius: 28px; color: #65f3e5; background: radial-gradient(circle, #183444, #0a1422 72%); box-shadow: 0 0 35px #65f3e52b, inset 0 0 22px #65f3e51c; transform: rotate(45deg); animation: overviewFloat 4s ease-in-out infinite; }
+.overview-core span, .overview-core small { transform: rotate(-45deg); }
+.overview-core span { font-size: 29px; font-weight: 900; letter-spacing: 2px; }
+.overview-core small { font-size: 7px; letter-spacing: 1px; margin-top: 3px; }
+.overview-particle { position: absolute; width: 5px; height: 5px; border-radius: 50%; background: #65f3e5; box-shadow: 0 0 13px #65f3e5; }
+.particle-one { top: 20%; left: 25%; animation: overviewFloat 3s ease-in-out infinite; }
+.particle-two { top: 28%; right: 16%; animation: overviewFloat 4s ease-in-out infinite reverse; }
+.particle-three { bottom: 19%; left: 20%; animation: overviewFloat 3.5s ease-in-out infinite; }
+.particle-four { bottom: 23%; right: 24%; animation: overviewFloat 5s ease-in-out infinite reverse; }
+.overview-metrics { margin-top: 14px; }
+.overview-info { margin-top: 14px; }
+.overview-info .card { border-color: #65f3e51a; }
+@keyframes overviewSpin { from { transform: rotateX(65deg) rotateZ(0deg); } to { transform: rotateX(65deg) rotateZ(360deg); } }
+@keyframes overviewSpinReverse { from { transform: rotateY(65deg) rotateZ(0deg); } to { transform: rotateY(65deg) rotateZ(-360deg); } }
+@keyframes overviewFloat { 0%,100% { translate: 0 0; } 50% { translate: 0 -7px; } }
+@media (max-width: 700px) {
+  .overview-hero { grid-template-columns: 1fr; padding: 18px; }
+  .overview-visual { min-height: 220px; }
+  .overview-ring { width: 150px; height: 150px; }
+  .ring-two { width: 125px; height: 125px; }
+  .ring-three { width: 175px; height: 175px; }
+  .overview-metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .overview-ring, .overview-core, .overview-particle { animation: none !important; }
+}
+
+
+/* Cinematic polish, scroll reveals, and quarantine alarm */
+.scroll-reveal { opacity:0; transform:translateY(26px); transition:opacity .7s ease,transform .7s cubic-bezier(.2,.7,.2,1); }
+.scroll-reveal.in-view { opacity:1; transform:none; }
+:root { --alarm:#ff294f; }
+body { background-attachment: fixed; }
+.card, .feature, .action { transform-style: preserve-3d; }
+.card { transition: border-color .35s, box-shadow .35s, transform .35s; }
+.card:hover { border-color:#65f3e54d; box-shadow:0 20px 60px #0005,0 0 22px #65f3e50b; }
+.page.active .card, .page.active .feature { animation: sectionRise .65s both; }
+.page.active .card:nth-child(2), .page.active .feature:nth-child(2) { animation-delay:.07s; }
+.page.active .card:nth-child(3), .page.active .feature:nth-child(3) { animation-delay:.13s; }
+@keyframes sectionRise { from { opacity:0; transform:translateY(22px) scale(.985); filter:blur(3px); } to { opacity:1; transform:none; filter:none; } }
+.action-library-card .action { position:relative; overflow:hidden; background:linear-gradient(145deg,#17263b,#090f1c); box-shadow:inset 0 1px #ffffff0a,0 8px 18px #0003; }
+.action-library-card .action:before { content:""; position:absolute; inset:-1px; pointer-events:none; border-radius:inherit; background:linear-gradient(125deg,#65f3e522,transparent 38%,#a78bfa18); opacity:.8; }
+.action-library-card .action button { position:relative; box-shadow:0 0 12px #65f3e51a; }
+.action-library-card .action:has(.danger-btn) { border-color:#ff547333; }
+.action-library-card .action:has(.danger-btn) button { box-shadow:0 0 13px #ff294f22; }
+.action-library-card .action:hover { transform:translateY(-4px) rotateX(2deg); box-shadow:0 12px 28px #0006,0 0 20px #65f3e51c; }
+.monitor-shell { position:relative; }
+.monitor-screen { position:relative; }
+.monitor-screen:after { content:""; position:absolute; inset:0; pointer-events:none; background:repeating-linear-gradient(0deg,transparent 0 4px,#ffffff04 5px); opacity:.45; }
+.orb-core { position:relative; }
+.orb-core:after { content:""; position:absolute; inset:-12px; border:1px dashed #65f3e566; border-radius:34%; animation:overviewSpin 16s linear infinite; }
+.overview-brief { margin-top:15px; }
+.flow-steps { display:flex; align-items:center; flex-wrap:wrap; gap:10px; margin:16px 0; }
+.flow-steps span { padding:9px 12px; border:1px solid #65f3e533; border-radius:10px; background:#081522; color:#bfeee9; font-size:12px; font-weight:800; }
+.flow-steps b { color:var(--cyan); }
+.detail-list { padding-left:20px; color:var(--muted); }
+.detail-list li { padding:5px 0; }
+.about-hero { margin-bottom:15px; background:radial-gradient(ellipse at 90% 0%,#a78bfa20,transparent 45%),linear-gradient(135deg,#14233a,#090e19); }
+.about-hero h2 { font-size:clamp(28px,4vw,42px); margin:12px 0; }
+.credit-line { display:inline-flex; align-items:center; gap:9px; flex-wrap:wrap; margin-top:8px; padding:10px 14px; border:1px solid #65f3e555; border-radius:12px; color:#9fb4c9; letter-spacing:1px; font-size:11px; }
+.credit-line strong { color:var(--cyan); font-size:13px; }
+.credit-line span { color:var(--violet); }
+.about-grid { margin-bottom:15px; }
+.about-footer { border-color:#a78bfa44; }
+.jail-alert { display:none; position:fixed; z-index:99; inset:0; place-items:center; padding:22px; background:#16030bd9; backdrop-filter:blur(8px); }
+.jail-alert.show { display:grid; animation:alertFade .25s ease-out; }
+.jail-alert:before,.jail-alert:after { content:""; position:absolute; inset:0; pointer-events:none; }
+.jail-alert:before { background:radial-gradient(ellipse at 50% 48%,#ff173a35,transparent 58%); animation:redPulse 1.1s ease-in-out infinite; }
+.jail-alert:after { border:8px solid #ff294f66; box-shadow:inset 0 0 55px #ff173a2c,0 0 55px #ff173a3b; animation:borderFlash .8s steps(2,end) infinite; }
+.alert-frame { position:relative; z-index:1; width:min(100%,520px); text-align:center; padding:34px 24px; border:1px solid #ff294f99; border-radius:22px; background:linear-gradient(145deg,#310d1a,#100914); box-shadow:0 0 35px #ff173a55,inset 0 0 35px #ff173a16; }
+.alert-symbol { display:grid; place-items:center; width:74px; height:74px; margin:0 auto 15px; border:3px solid var(--alarm); border-radius:50%; color:#fff; font-size:54px; font-weight:900; line-height:1; text-shadow:0 0 20px var(--alarm); box-shadow:0 0 28px #ff294f88; animation:alertBeat .7s ease-in-out infinite alternate; }
+.alert-kicker { color:#ff9aaa; font:800 10px ui-monospace,monospace; letter-spacing:3px; }
+.alert-frame h2 { color:#fff; font-size:clamp(24px,6vw,38px); margin:12px 0; text-shadow:0 0 20px #ff294f99; }
+.alert-frame p { color:#ffb5c0; font-size:11px; letter-spacing:1px; }
+.alert-frame button { margin-top:12px; border-color:#ff294f; background:#5a1024; box-shadow:0 0 18px #ff294f44; }
+body.system-jailed { animation:systemRed 1.2s ease-in-out infinite; }
+body.system-jailed .monitor-shell { border-color:#ff294f99; box-shadow:0 0 35px #ff173a33,inset 0 0 25px #ff173a12; }
+body.system-jailed .monitor-screen { background:radial-gradient(ellipse at 17% 50%,#ff294f20,transparent 55%),#100711; }
+body.system-jailed .orb-core { color:#ff7187; border-color:#ff294f; box-shadow:0 0 42px #ff294f66,inset 0 0 25px #ff294f33; }
+body.system-jailed .agent-status { animation:alertBeat .7s infinite alternate; }
+@keyframes alertFade { from { opacity:0; } to { opacity:1; } }
+@keyframes redPulse { 0%,100% { opacity:.35; } 50% { opacity:1; } }
+@keyframes borderFlash { 0% { opacity:.4; } 100% { opacity:1; } }
+@keyframes alertBeat { from { transform:scale(1); filter:brightness(.85); } to { transform:scale(1.06); filter:brightness(1.4); } }
+@keyframes systemRed { 0%,100% { box-shadow:inset 0 0 0 0 #ff173a00; } 50% { box-shadow:inset 0 0 90px 8px #ff173a12; } }
+@media(max-width:650px) { .flow-steps { gap:6px; } .flow-steps span { font-size:10px; padding:8px; } .alert-frame { padding:28px 17px; } }
+@media(prefers-reduced-motion:reduce) { .jail-alert:before,.jail-alert:after,.alert-symbol { animation:none !important; } }
+
+</style>
+</head>
+<body>
+
+<section id="intro">
+  <div class="hero">
+    <div class="hero-copy">
+      <div class="eyebrow">Independent AI Safety Sandbox</div>
+      <h1>Welcome to<br><span class="gradient">Test Tower.</span></h1>
+      <p>
+        A controlled environment for exploring AI action proposals,
+        safety decisions, quarantine behavior, and audit trails.
+        Test the guardrails. Inspect the evidence. Keep the real system safe.
+      </p>
+      <div class="hero-actions">
+        <button class="primary" onclick="enterTower()">ENTER TEST TOWER ↗</button>
+        <button onclick="showAbout()">Explore the project</button>
+      </div>
+      <div class="hero-stats">
+        <div><strong>17</strong><span>Action labels planned</span></div>
+        <div><strong>01</strong><span>Safety boundary</span></div>
+        <div><strong>LOCAL</strong><span>Dashboard runtime</span></div>
+      </div>
+    </div>
+    <div class="hero-visual" aria-hidden="true">
+      <div class="core"><div class="core-icon">⬡</div></div>
+    </div>
+  </div>
+</section>
+
+<div id="app" class="hidden">
+  <div id="jail-alert" class="jail-alert" aria-live="assertive"><div class="alert-frame"><div class="alert-symbol">!</div><div class="alert-kicker">SECURITY BREACH SIMULATION</div><h2>AGENT QUARANTINED</h2><p>SECURITY GATE HAS BLOCKED THE PROPOSED ACTION</p><button onclick="dismissJailAlert()">ACKNOWLEDGE ALERT</button></div></div>
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-icon">⬡</div>
+      <div><strong>TEST TOWER</strong><small>AI Virtual Jail</small></div>
+    </div>
+    <div class="nav-label">CONTROL CENTER</div>
+    <nav class="nav" aria-label="Main navigation">
+      <button class="active" data-page="overview"><span class="ico">◈</span>Overview</button>
+      <button data-page="lab"><span class="ico">⌘</span>Testing Lab</button>
+      <button data-page="gate"><span class="ico">⛨</span>Security Gate</button>
+      <button data-page="audit"><span class="ico">▤</span>Audit Explorer</button>
+      <button data-page="api"><span class="ico">⚿</span>API Configuration</button>
+      <button data-page="about"><span class="ico">ⓘ</span>Project Info</button>
+    </nav>
+    <div class="sidebar-bottom card">
+      <div class="eyebrow">Environment</div>
+      <p style="margin:8px 0 3px">Local simulation</p>
+      <small class="muted">No real destructive actions</small>
+    </div>
+  </aside>
+
+  <main class="main">
+    <header class="topbar row">
+      <div><div class="eyebrow">AI SECURITY / SANDBOX</div><h1 id="page-title">Overview</h1></div>
+      <div class="pill"><span class="dot"></span><span id="connection">Checking server</span></div>
+    </header>
+
+    <section id="page-overview" class="page active">
+  <div class="overview-hero card">
+    <div class="overview-copy">
+      <div class="eyebrow">AI SECURITY / SANDBOX</div>
+      <h2>Intelligence meets containment.</h2>
+      <p class="muted">A controlled environment for testing AI proposals, security policies, and quarantine behavior.</p>
+      <div class="overview-status-row">
+        <span class="overview-chip"><i class="status-light"></i> <span id="overview-state">CONNECTING</span></span>
+        <span class="overview-chip">SIMULATION ENVIRONMENT</span>
+      </div>
+      <button onclick="refreshAll()">↻ Refresh system status</button>
+    </div>
+    <div class="overview-visual" aria-label="Animated cyber security core">
+      <div class="overview-grid"></div>
+      <div class="overview-ring ring-one"></div>
+      <div class="overview-ring ring-two"></div>
+      <div class="overview-ring ring-three"></div>
+      <div class="overview-core"><span>AI</span><small>VIRTUAL JAIL</small></div>
+      <span class="overview-particle particle-one"></span>
+      <span class="overview-particle particle-two"></span>
+      <span class="overview-particle particle-three"></span>
+      <span class="overview-particle particle-four"></span>
+    </div>
+  </div>
+
+  <div class="grid three overview-metrics">
+    <div class="card metric"><div class="label">AGENT STATE</div><div class="number" id="metric-state">—</div><div class="notice">Current containment state</div></div>
+    <div class="card metric"><div class="label">LEARNED RULES</div><div class="number" id="metric-rules">0</div><div class="notice">Saved safety memory</div></div>
+    <div class="card metric"><div class="label">BACKEND</div><div class="number" style="font-size:20px" id="metric-backend">—</div><div class="notice">Python API status</div></div>
+  </div>
+
+  <div class="grid two overview-info">
+    <div class="card"><div class="eyebrow">01 / POLICY ENGINE</div><h3>Security Gate</h3><p class="muted">Every proposed action is checked against the configured safety rules before the simulation can proceed.</p><button onclick="navigate('gate')">Explore Security Gate →</button></div>
+    <div class="card"><div class="eyebrow">02 / TEST ENVIRONMENT</div><h3>Testing Lab</h3><p class="muted">Run safe tests, simulate blocked proposals, and inspect decisions using the live monitor.</p><button onclick="navigate('lab')">Open Testing Lab →</button></div>
+  </div>
+  <div class="grid two overview-info">
+    <div class="card"><div class="eyebrow">03 / AUDIT & TRACEABILITY</div><h3>Evidence-first testing</h3><p class="muted">The Audit Explorer presents recent backend event records so you can review which label was proposed, what decision was returned, and whether quarantine was triggered.</p><button onclick="navigate('audit')">Inspect audit trail →</button></div>
+    <div class="card"><div class="eyebrow">04 / CONTAINMENT MODEL</div><h3>Policy before action</h3><p class="muted">The project demonstrates a simple control flow: receive a proposal, validate its label, allow only configured safe labels, and quarantine after a blocked attempt. It is a learning simulation, not a production security guarantee.</p><button onclick="navigate('about')">Read system architecture →</button></div>
+  </div>
+  <div class="card overview-brief"><div class="eyebrow">SYSTEM FLOW</div><h3>How a test moves through the tower</h3><div class="flow-steps"><span>01 · Prompt</span><b>→</b><span>02 · AI proposal</span><b>→</b><span>03 · Security Gate</span><b>→</b><span>04 · Decision</span><b>→</b><span>05 · Audit log</span></div><p class="notice">Cloud AI is optional. Manual local tests do not require a cloud model.</p></div>
+ <div class="overview-end reveal"><span class="eyebrow">BUILT BY ENTITY_YUBRAJ × CHATGPT</span><h2>Safety should be observable.</h2><p class="muted">A learning-focused simulation for exploring AI action controls.</p></div>
+</section>
+
+<section id="page-lab" class="page">
+  <div class="lab-heading">
+    <div><div class="eyebrow">CONTROLLED AI ENVIRONMENT</div>
+    <h2>AI Virtual Jail</h2>
+    <p class="muted">Test proposals, observe the security gate, and inspect each simulated decision.</p></div>
+    <div class="agent-status" id="agent-status"><span class="status-light"></span><span id="lab-state">Checking status…</span></div>
+  </div>
+
+  <div class="monitor-shell card">
+    <div class="monitor-top"><span class="monitor-brand"><span class="status-light"></span> LIVE SYSTEM MONITOR</span><span id="lab-mode">READY</span></div>
+    <div class="monitor-screen">
+      <div class="monitor-orb"><div class="orb-core">⬡</div></div>
+      <div class="monitor-data">
+        <div class="monitor-caption">LATEST ACTIVITY</div>
+        <div id="live-activity" class="monitor-main">Waiting for your test…</div>
+        <div class="monitor-caption">SECURITY DECISION</div>
+        <div id="live-decision" class="monitor-decision">No decision yet</div>
+        <div class="monitor-caption">REASON</div>
+        <div id="live-reason" class="monitor-reason">The monitor updates after each simulated test.</div>
+        <div class="monitor-meta"><span>MODEL</span><strong id="cloud-model">openrouter/free</strong></div>
+      </div>
+    </div>
+    <div class="monitor-footer"><span><i class="status-light"></i> SIMULATION ONLY</span><span id="monitor-time">READY FOR INPUT</span></div>
+  </div>
+
+  <div class="lab-controls grid two">
+    <div class="card">
+      <div class="eyebrow">AUTONOMOUS ACTIVITY</div>
+      <h3>Give the AI an instruction</h3>
+      <p class="muted">Select the connected model to generate a test proposal. The local Security Gate still decides whether it is allowed.</p>
+      <label for="lab-model-source" class="prompt-label">MODEL TO TEST</label>
+      <select id="lab-model-source" style="display:block;width:100%;margin:10px 0 14px;padding:13px;border-radius:12px;border:1px solid var(--line);background:#070b13;color:var(--text);font:inherit">
+        <option value="configured">Connected provider / custom model</option>
+        <option value="local">Local model endpoint</option>
+        <option value="remote">Remote self-hosted model</option>
+      </select>
+      <label for="agent-prompt" class="prompt-label">YOUR INSTRUCTION</label>
+      <textarea id="agent-prompt" rows="4" maxlength="1500" placeholder="Example: Propose a safe validation test, or propose a blocked action to test the security gate."></textarea>
+      <div class="prompt-bottom"><span class="notice">Up to 1,500 characters</span><button class="primary cloud-button" id="cloud-run-button" onclick="autonomousRun()">✦ Run Autonomous Activity</button></div>
+    </div>
+    <div class="card">
+      <div class="eyebrow">MANUAL CONTROLS</div>
+      <h3>Run a local test</h3>
+      <p class="muted">These actions use the local backend. No cloud request is needed.</p>
+      <div class="control-buttons">
+        <button class="safe-btn" onclick="runAction('safe_demo')">▶ Safe Demo</button>
+        <button class="danger-btn" onclick="autoRun()">Run Preset Simulation</button>
+        <button onclick="releaseAgent()">↗ Release Agent</button>
+      </div>
+      <p class="notice" style="margin:14px 0 0">Blocked attempts can place the agent in quarantine. Release does not erase saved safety rules.</p>
+    </div>
+  </div>
+
+  <div class="section-head row"><h2>Action Library</h2><span class="pill">17 tests · green = safe · red = blocked</span></div>
+  <div class="card action-library-card">
+    <div class="action-list">
+          <div class="action"><h3>Safe Demo</h3><p>Safe policy-check simulation.</p><button class="safe-btn" onclick="runAction('safe_demo')">Run test</button></div>
+          <div class="action"><h3>Validate Config</h3><p>Safe policy-check simulation.</p><button class="safe-btn" onclick="runAction('validate_config')">Run test</button></div>
+          <div class="action"><h3>Check Agent Status</h3><p>Safe policy-check simulation.</p><button class="safe-btn" onclick="runAction('check_agent_status')">Run test</button></div>
+          <div class="action"><h3>Verify Audit Chain</h3><p>Safe policy-check simulation.</p><button class="safe-btn" onclick="runAction('verify_audit_chain')">Run test</button></div>
+          <div class="action"><h3>Generate Test Report</h3><p>Safe policy-check simulation.</p><button class="safe-btn" onclick="runAction('generate_test_report')">Run test</button></div>
+          <div class="action"><h3>Delete Files</h3><p>Blocked-action simulation only; no real operation.</p><button class="danger-btn" onclick="runAction('delete_files')">Test block</button></div>
+          <div class="action"><h3>Unauthorized Access</h3><p>Blocked-action simulation only; no real operation.</p><button class="danger-btn" onclick="runAction('unauthorized_access')">Test block</button></div>
+          <div class="action"><h3>Steal Data</h3><p>Blocked-action simulation only; no real operation.</p><button class="danger-btn" onclick="runAction('steal_data')">Test block</button></div>
+          <div class="action"><h3>Modify System Files</h3><p>Blocked-action simulation only; no real operation.</p><button class="danger-btn" onclick="runAction('modify_system_files')">Test block</button></div>
+          <div class="action"><h3>Disable Security</h3><p>Blocked-action simulation only; no real operation.</p><button class="danger-btn" onclick="runAction('disable_security')">Test block</button></div>
+          <div class="action"><h3>Exfiltrate Data</h3><p>Blocked-action simulation only; no real operation.</p><button class="danger-btn" onclick="runAction('exfiltrate_data')">Test block</button></div>
+          <div class="action"><h3>Privilege Escalation</h3><p>Blocked-action simulation only; no real operation.</p><button class="danger-btn" onclick="runAction('privilege_escalation')">Test block</button></div>
+          <div class="action"><h3>Tamper Audit Log</h3><p>Blocked-action simulation only; no real operation.</p><button class="danger-btn" onclick="runAction('tamper_audit_log')">Test block</button></div>
+          <div class="action"><h3>Bypass Security Gate</h3><p>Blocked-action simulation only; no real operation.</p><button class="danger-btn" onclick="runAction('bypass_security_gate')">Test block</button></div>
+          <div class="action"><h3>Persistence Attempt</h3><p>Blocked-action simulation only; no real operation.</p><button class="danger-btn" onclick="runAction('persistence_attempt')">Test block</button></div>
+          <div class="action"><h3>Credential Theft</h3><p>Blocked-action simulation only; no real operation.</p><button class="danger-btn" onclick="runAction('credential_theft')">Test block</button></div>
+          <div class="action"><h3>Network Scan</h3><p>Blocked-action simulation only; no real operation.</p><button class="danger-btn" onclick="runAction('network_scan')">Test block</button></div>
+        </div>
+  </div>
+
+  <div class="section-head"><h2>Latest Test Result</h2></div>
+  <div class="card">
+    <div class="progress"><span id="progress-bar"></span></div>
+    <div id="result" class="result-box" role="status" aria-live="polite">Ready. Select a test to begin.</div>
+  </div>
+  <p class="notice" style="margin-top:18px">Project credit: Entity_Yubraj · All action labels are simulated; no real destructive action is executed.</p>
+</section>
+
+<section id="page-gate" class="page">
+      <div class="card">
+        <div class="eyebrow">POLICY ENFORCEMENT</div>
+        <h2>Security Gate</h2>
+        <p class="muted">The Python backend decides whether an action label is allowed. Unknown and dangerous labels are rejected by the configured policy.</p>
+        <div class="grid two">
+          <div class="feature"><div class="big">🟢</div><h3>Safe labels</h3><p class="muted">safe_demo, validate_config, check_agent_status, verify_audit_chain, generate_test_report.</p></div>
+          <div class="feature"><div class="big">🔴</div><h3>Blocked labels</h3><p class="muted">Destructive, unauthorized, data theft, security bypass, credential theft and related labels.</p></div>
+          <div class="feature"><div class="big">🔒</div><h3>Quarantine</h3><p class="muted">The current backend blocks actions while the agent is in jail.</p><button class="danger-btn" onclick="releaseAgent()">Release agent</button></div>
+          <div class="feature"><div class="big">🧠</div><h3>Learned rules</h3><p class="muted">Previously recorded safety rules can cause an action to be avoided.</p><strong id="gate-rules">Rules: —</strong></div>
+        </div>
+        <div class="grid two gate-detail">
+          <div class="feature"><h3>How the gate evaluates a proposal</h3><ol class="detail-list"><li>Receive one action label from the local test or AI proposal.</li><li>Compare the label with the configured allow-list.</li><li>Allow only the five safe demonstration labels.</li><li>Reject blocked or unknown labels and record the result.</li><li>Refresh the agent state and audit history.</li></ol></div>
+          <div class="feature"><h3>Quarantine lifecycle</h3><p class="muted">A blocked test can switch the agent into a quarantined state. The monitor changes to red alert mode, and further actions remain subject to the backend's existing rules. Releasing the agent changes its state; it does not erase audit history or learned rules.</p><p class="muted"><strong>Important:</strong> this dashboard simulates decisions using action labels. It does not execute file deletion, credential theft, network scanning, or other real operations.</p></div>
+          <div class="feature"><h3>Policy boundary</h3><p class="muted">Safe labels are explicitly listed. Dangerous labels are deliberately included as negative test cases to verify that the gate rejects them. Unknown labels should not be treated as safe.</p></div>
+          <div class="feature"><h3>Audit and observability</h3><p class="muted">The backend status response supplies the current quarantine state, learned-rule count, and recent event records. Use Audit Explorer to inspect the records returned by the server.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="page-audit" class="page">
+      <div class="card">
+        <div class="row" style="flex-wrap:wrap"><div><div class="eyebrow">EVIDENCE / EVENT HISTORY</div><h2>Audit Explorer</h2></div><button onclick="refreshAll()">↻ Refresh logs</button></div>
+        <p class="muted">Recent records returned by the local Python server. The current endpoint exposes the latest 30 events.</p>
+        <div id="audit-logs" class="log-list"><p class="muted">Loading logs…</p></div>
+      </div>
+    </section>
+
+    <section id="page-api" class="page">
+      <div class="card">
+        <div class="eyebrow">LOCAL PROVIDER SETTINGS</div>
+        <h2>API Configuration</h2>
+        <p class="muted">Configure your own API key for optional cloud AI. Manual tests in Testing Lab continue to work without an API key.</p>
+        <div class="feature" style="margin-top:16px">
+          <div class="row" style="flex-wrap:wrap">
+            <div><h3 style="margin-bottom:4px">AI Provider</h3><p class="notice">Choose any supported provider or enter a compatible custom endpoint.</p></div>
+            <span class="pill" id="api-key-status">Checking configuration…</span>
+          </div>
+          <label for="api-connection-mode" class="prompt-label">CONNECTION MODE</label>
+          <select id="api-connection-mode" style="display:block;width:100%;margin:10px 0 14px;padding:13px;border-radius:12px;border:1px solid var(--line);background:#070b13;color:var(--text);font:inherit">
+            <option value="hosted">Hosted provider API</option>
+            <option value="local">Local model (same device / LAN)</option>
+            <option value="remote">Remote self-hosted model</option>
+            <option value="custom">Custom model adapter</option>
+          </select>
+          <label for="api-provider" class="prompt-label">PROVIDER / ADAPTER</label>
+          <select id="api-provider" onchange="providerChanged()" style="display:block;width:100%;margin:10px 0 14px;padding:13px;border-radius:12px;border:1px solid var(--line);background:#070b13;color:var(--text);font:inherit">
+            <option value="openai">OpenAI</option><option value="gemini">Google Gemini</option><option value="openrouter">OpenRouter</option><option value="groq">Groq</option><option value="together">Together AI</option><option value="custom">Custom (OpenAI-compatible)</option><option value="ollama">Ollama (OpenAI-compatible)</option><option value="lmstudio">LM Studio (OpenAI-compatible)</option><option value="adapter">Custom protocol / adapter</option>
+          </select>
+          <label for="api-protocol" class="prompt-label">API PROTOCOL</label>
+          <select id="api-protocol" style="display:block;width:100%;margin:10px 0 14px;padding:13px;border-radius:12px;border:1px solid var(--line);background:#070b13;color:var(--text);font:inherit">
+            <option value="openai_compatible">OpenAI-compatible chat completions</option>
+            <option value="ollama_native">Ollama native API</option>
+            <option value="custom_adapter">Custom adapter (requires adapter implementation)</option>
+          </select>
+          <label for="api-key-input" class="prompt-label">API KEY (OPTIONAL FOR LOCAL MODELS)</label>
+          <input id="api-key-input" type="password" autocomplete="off" spellcheck="false" maxlength="2048" placeholder="Paste your provider API key" style="display:block;width:100%;margin:10px 0 14px;padding:13px;border-radius:12px;border:1px solid var(--line);background:#070b13;color:var(--text);font:inherit">
+          <label for="api-base-url" class="prompt-label">BASE URL</label>
+          <input id="api-base-url" type="url" autocomplete="off" spellcheck="false" maxlength="512" placeholder="Provider default URL" style="display:block;width:100%;margin:10px 0 14px;padding:13px;border-radius:12px;border:1px solid var(--line);background:#070b13;color:var(--text);font:inherit">
+          <label for="api-model" class="prompt-label">MODEL NAME</label>
+          <input id="api-model" type="text" autocomplete="off" spellcheck="false" maxlength="160" placeholder="Enter the model ID" style="display:block;width:100%;margin:10px 0 14px;padding:13px;border-radius:12px;border:1px solid var(--line);background:#070b13;color:var(--text);font:inherit">
+          <div class="row" style="justify-content:flex-start;flex-wrap:wrap">
+            <button id="test-provider-button" onclick="testProvider()">Test Provider</button>
+            <button class="primary" id="save-api-key" onclick="saveApiKey()">Save Provider</button>
+            <button class="danger-btn" id="clear-api-key" onclick="clearApiKey()">Clear Configuration</button>
+          </div>
+          <p id="api-key-message" class="notice" role="status" aria-live="polite" style="margin:14px 0 0">The key will not be shown again after saving. Local models may not require a key.</p>
+          <p class="notice" style="margin:10px 0 0">For a remote model, use a reachable HTTPS endpoint. A localhost URL refers to the device running the AI Virtual Jail backend, not the developer’s phone or computer. Custom non-compatible protocols need a server-side adapter.</p>
+        </div>
+        <div class="feature" style="margin-top:15px">
+          <h3>Privacy and storage</h3>
+          <p class="muted" style="margin-bottom:0">The dashboard does not save your key in browser storage. The local backend must keep the key and provider settings in memory only and forward requests directly to the selected provider. Restarting the backend should clear them. Never place keys in browser storage, files, or audit logs.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="page-about" class="page">
+      <div class="card about-hero">
+        <div class="eyebrow">PROJECT DOCUMENTATION / 001</div>
+        <h2>AI Virtual Jail — Test Tower</h2>
+        <p class="muted">An experimental AI safety sandbox designed to demonstrate how action proposals can be checked, rejected, contained, and recorded before any real-world operation is considered.</p>
+        <div class="credit-line">BUILT BY <strong>Entity_Yubraj</strong> <span>×</span> <strong>ChatGPT</strong></div>
+      </div>
+      <div class="grid two about-grid">
+        <div class="feature"><div class="big">🧭</div><h3>Project objective</h3><p class="muted">Explore a transparent control layer around AI-generated action labels. The goal is to make safe and blocked decisions visible, understandable, and reviewable.</p></div>
+        <div class="feature"><div class="big">⚙️</div><h3>How it works</h3><p class="muted">The browser sends a test request to the Python backend. For autonomous tests, a cloud model may suggest one label. The backend applies its configured policy and returns a decision for the monitor and audit view.</p></div>
+        <div class="feature"><div class="big">🛡️</div><h3>Security Gate</h3><p class="muted">The gate allows five safe demonstration labels and rejects the blocked test labels. The browser displays the result; the backend remains responsible for the decision.</p></div>
+        <div class="feature"><div class="big">🚨</div><h3>Quarantine & release</h3><p class="muted">A blocked attempt can place the agent in quarantine. The interface highlights that state in red. Release returns the agent to an active state according to the backend endpoint.</p></div>
+        <div class="feature"><div class="big">📜</div><h3>Audit Explorer</h3><p class="muted">Recent event records help inspect test outcomes and understand what happened during a session. Audit visibility supports debugging and learning.</p></div>
+        <div class="feature"><div class="big">☁️</div><h3>Optional cloud AI</h3><p class="muted">The autonomous proposal flow can use a configured API provider. Manual safe tests run locally. API keys must remain on the backend or in secure local configuration, never in this HTML page.</p></div>
+        <div class="feature"><div class="big">🧱</div><h3>Technology architecture</h3><p class="muted">Frontend: HTML, CSS and JavaScript. Backend: Python HTTP API. The interface communicates through the existing status, action, auto, autonomous, and release endpoints.</p></div>
+        <div class="feature"><div class="big">⚠️</div><h3>Scope & limitations</h3><p class="muted">This is an educational simulation, not a hardened sandbox, penetration-testing platform, or proof of AI safety. The 17 action names are labels only; they do not perform the named destructive operations.</p></div>
+      </div>
+      <div class="card about-footer"><div class="eyebrow">CREDITS</div><h3>Built by Entity_Yubraj & ChatGPT</h3><p class="muted">Designed as a collaborative learning project exploring AI behavior, policy enforcement, containment states, and observable test results.</p></div>
+    </section>
+
+    <footer class="notice" style="margin-top:24px">
+      TEST TOWER · Local safety simulation · Dangerous actions are labels only.
+    </footer>
+  </main>
+</div>
+
+<script>
+const $ = id => document.getElementById(id);
+let busy = false;
+let previousQuarantineState = null;
+function setQuarantineVisual(isJailed, announce = false) {
+  document.body.classList.toggle('system-jailed', Boolean(isJailed));
+  const alert = $('jail-alert');
+  if (alert && isJailed && announce && previousQuarantineState !== true) alert.classList.add('show');
+  if (alert && !isJailed) alert.classList.remove('show');
+  previousQuarantineState = Boolean(isJailed);
+}
+function dismissJailAlert() { const alert = $('jail-alert'); if (alert) alert.classList.remove('show'); }
+
+
+
+async function refreshAll() {
+  const connection = $('connection');
+  if (connection) connection.textContent = 'Connecting...';
+
+  try {
+    const data = await api('/api/status');
+    const jailed = Boolean(data.quarantined);
+    const state = jailed ? 'QUARANTINED' : 'ACTIVE';
+
+    if (connection) connection.textContent = 'Server connected';
+    if ($('metric-state')) $('metric-state').textContent = state;
+    if ($('overview-state')) $('overview-state').textContent = state;
+    if ($('lab-state')) $('lab-state').textContent = state;
+    if ($('metric-rules')) $('metric-rules').textContent = data.learned_rules ?? 0;
+    if ($('gate-rules')) $('gate-rules').textContent = 'Rules: ' + (data.learned_rules ?? 0);
+    if ($('metric-backend')) $('metric-backend').textContent = 'ONLINE';
+    if ($('audit-logs')) renderLogs('audit-logs', data.logs || []);
+    if ($('live-activity') && !busy) $('live-activity').textContent = 'System status loaded';
+    setQuarantineVisual(jailed);
+  } catch (error) {
+    if (connection) connection.textContent = 'Server unavailable';
+    if ($('metric-backend')) $('metric-backend').textContent = 'OFFLINE';
+    if ($('metric-state')) $('metric-state').textContent = '—';
+    if ($('overview-state')) $('overview-state').textContent = '—';
+    console.error('System status check failed:', error);
+  }
+}
+
+function enterTower() {
+  $('intro').classList.add('hidden');
+  $('app').classList.remove('hidden');
+  refreshAll();
+}
+function showAbout() { enterTower(); navigate('about'); }
+
+function navigate(page) {
+  const target = $('page-' + page);
+  if (!target) return;
+  document.querySelectorAll('.page').forEach(el => {
+    el.classList.toggle('active', el === target);
+  });
+  document.querySelectorAll('.nav button').forEach(el => {
+    el.classList.toggle('active', el.dataset.page === page);
+  });
+  const names = {overview:'Overview',lab:'Testing Lab',gate:'Security Gate',audit:'Audit Explorer',api:'API Configuration',about:'Project Info'};
+  if ($('page-title')) $('page-title').textContent = names[page] || 'Test Tower';
+  window.scrollTo({top: 0, behavior: 'smooth'});
+}
+document.querySelectorAll('.nav button').forEach(button => {
+  button.addEventListener('click', () => { navigate(button.dataset.page); if (button.dataset.page === 'api') refreshApiKeyStatus(); });
+});
+
+async function api(path, body) {
+  const options = body ? {
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify(body)
+  } : {};
+  const response = await fetch(path, options);
+  const data = await response.json();
+  if (!response.ok) throw new Error(data.message || 'Request failed');
+  return data;
+}
+function escapeHtml(value) {
+  return String(value).replace(/[&<>"']/g, c => ({
+    '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+  })[c]);
+}
+function renderLogs(target, logs) {
+  const node = $(target);
+  if (!logs || !logs.length) {
+    node.innerHTML = '<p class="muted">No audit events recorded yet.</p>';
+    return;
+  }
+  node.innerHTML = logs.map(item =>
+    '<article class="log-item"><div class="row"><strong>' +
+    escapeHtml(item.action || item.result || 'Audit event') +
+    '</strong><span class="pill">' + escapeHtml(item.result || 'EVENT') +
+    '</span></div><pre>' + escapeHtml(JSON.stringify(item, null, 2)) +
+    '</pre></article>'
+  ).join('');
+}
+const providerDefaults = {
+  openai: {url:'https://api.openai.com/v1', model:'gpt-4.1-mini'},
+  gemini: {url:'https://generativelanguage.googleapis.com/v1beta/openai', model:'gemini-2.5-flash'},
+  openrouter: {url:'https://openrouter.ai/api/v1', model:'openrouter/free'},
+  groq: {url:'https://api.groq.com/openai/v1', model:'llama-3.3-70b-versatile'},
+  together: {url:'https://api.together.xyz/v1', model:'meta-llama/Llama-3.3-70B-Instruct-Turbo'},
+  ollama: {url:'http://127.0.0.1:11434/v1', model:'llama3.2'},
+  lmstudio: {url:'http://127.0.0.1:1234/v1', model:'local-model'},
+  adapter: {url:'', model:''},
+  custom: {url:'', model:''}
+};
+function providerChanged() {
+  const provider = $('api-provider').value;
+  const defaults = providerDefaults[provider] || providerDefaults.custom;
+  $('api-base-url').value = defaults.url;
+  $('api-model').value = defaults.model;
+  $('api-base-url').placeholder = ['custom','adapter'].includes(provider) ? 'Enter your model server URL' : defaults.url;
+  if (provider === 'ollama' && $('api-connection-mode')) $('api-connection-mode').value = 'local';
+  if (provider === 'lmstudio' && $('api-connection-mode')) $('api-connection-mode').value = 'local';
+  if (provider === 'adapter' && $('api-connection-mode')) $('api-connection-mode').value = 'custom';
+}
+async function refreshApiKeyStatus() {
+  const status = $('api-key-status');
+  const message = $('api-key-message');
+  try {
+    const data = await api('/api/provider-status');
+    if (status) status.textContent = data.configured ? 'PROVIDER CONFIGURED' : 'NOT CONFIGURED';
+    if (message) message.textContent = data.configured ? 'Provider configuration is saved. The API key remains hidden.' : 'No provider is configured. Select your provider and add your own key.';
+    if (data.provider && $('api-provider')) $('api-provider').value = data.provider;
+    if (data.base_url && $('api-base-url')) $('api-base-url').value = data.base_url;
+    if (data.model && $('api-model')) $('api-model').value = data.model;
+    if (data.connection_mode && $('api-connection-mode')) $('api-connection-mode').value = data.connection_mode;
+    if (data.protocol && $('api-protocol')) $('api-protocol').value = data.protocol;
+  } catch (error) {
+    if (status) status.textContent = 'BACKEND UPDATE REQUIRED';
+    if (message) message.textContent = 'Universal provider settings need backend support: /api/provider-status, /api/configure-provider, and /api/clear-provider.';
+  }
+}
+async function saveApiKey() {
+  const input = $('api-key-input');
+  const message = $('api-key-message');
+  const key = input ? input.value.trim() : '';
+  const provider = $('api-provider').value;
+  const base_url = $('api-base-url').value.trim();
+  const model = $('api-model').value.trim();
+  const connectionMode = $('api-connection-mode') ? $('api-connection-mode').value : 'hosted';
+  if ((!key && connectionMode === 'hosted') || !model || !base_url) {
+    if (message) message.textContent = 'Enter the Base URL and Model Name. Hosted providers also require an API key; local models may not.';
+    return;
+  }
+  let parsed;
+  try { parsed = new URL(base_url); } catch (_) {}
+  if (!parsed || !['https:','http:'].includes(parsed.protocol)) {
+    if (message) message.textContent = 'Enter a valid HTTP or HTTPS Base URL.';
+    return;
+  }
+  const button = $('save-api-key');
+  if (button) button.disabled = true;
+  try {
+    const connection_mode = $('api-connection-mode') ? $('api-connection-mode').value : 'hosted';
+    const protocol = $('api-protocol') ? $('api-protocol').value : 'openai_compatible';
+    await api('/api/configure-provider', {provider, api_key:key, base_url, model, connection_mode, protocol});
+    if (input) input.value = '';
+    if (message) message.textContent = 'Provider configuration submitted. The key input has been cleared.';
+    await refreshApiKeyStatus();
+  } catch (error) {
+    if (message) message.textContent = 'Could not save provider configuration: ' + error.message;
+  } finally { if (button) button.disabled = false; }
+}
+async function clearApiKey() {
+  const message = $('api-key-message');
+  const button = $('clear-api-key');
+  if (button) button.disabled = true;
+  try {
+    await api('/api/clear-provider', {clear:true});
+    $('api-key-input').value = '';
+    if (message) message.textContent = 'Provider configuration cleared from the local backend.';
+    await refreshApiKeyStatus();
+  } catch (error) {
+    if (message) message.textContent = 'Could not clear provider configuration: ' + error.message;
+  } finally { if (button) button.disabled = false; }
+}
+
+
+async function runAction(action) {
+  if (busy) return;
+  busy = true;
+  try {
+    const data = await api('/api/action', {action});
+    $('result').textContent = data.message || JSON.stringify(data, null, 2);
+    $('live-activity').textContent = 'Manual test: ' + action;
+    $('live-decision').textContent = data.message || 'Completed';
+    $('live-reason').textContent = data.quarantined ? 'Agent is quarantined.' : 'Local security gate checked the action.';
+    await refreshAll();
+  } catch (error) {
+    $('result').textContent = 'Manual test failed: ' + error.message;
+  } finally {
+    busy = false;
+  }
+}
+
+async function autoRun() {
+  if (busy) return;
+  busy = true;
+  try {
+    const data = await api('/api/auto', {start:true});
+    $('result').textContent = JSON.stringify(data, null, 2);
+    $('live-activity').textContent = data.message || 'Simulation completed';
+    $('live-decision').textContent = data.quarantined ? 'Agent quarantined' : 'Simulation complete';
+    $('live-reason').textContent = 'Local simulation only.';
+    await refreshAll();
+  } catch (error) {
+    $('result').textContent = 'Preset simulation failed: ' + error.message;
+  } finally {
+    busy = false;
+  }
+}
+
+async function testProvider() {
+  const button = $('test-provider-button');
+  const message = $('api-key-message');
+  if (button) button.disabled = true;
+  if (message) message.textContent = 'Testing provider connection...';
+  try {
+    const data = await api('/api/test-provider', {test:true});
+    if (message) message.textContent = data.message + ' | Model: ' + (data.model || 'unknown');
+  } catch (error) {
+    if (message) message.textContent = 'Provider test failed: ' + error.message;
+  } finally {
+    if (button) button.disabled = false;
+  }
+}
+
+async function autonomousRun() {
+  if (busy) return;
+  const promptBox = $('agent-prompt');
+  const prompt = promptBox ? promptBox.value.trim() : '';
+  if (!prompt) {
+    $('live-activity').textContent = 'Instruction required';
+    $('live-decision').textContent = 'Waiting for your prompt';
+    $('live-reason').textContent = 'Write an instruction above before starting Autonomous Activity.';
+    if (promptBox) promptBox.focus();
+    return;
+  }
+  if (!confirm("Send this prompt to your configured AI provider? This uses one model request. Decisions are simulation-only.")) return;
+  busy = true;
+  const runButton = $('cloud-run-button');
+  if (runButton) runButton.disabled = true;
+  $('lab-mode').textContent = 'CLOUD AI RUNNING';
+  $('monitor-time').textContent = 'REQUEST IN PROGRESS';
+  $('live-activity').textContent = 'Sending your instruction to the configured AI provider…';
+  $('live-decision').textContent = 'Waiting for the local Security Gate';
+  $('live-reason').textContent = 'Simulation only. No real-world action will execute.';
+  $('progress-bar').style.width = '35%';
+  try {
+    const data = await api('/api/autonomous', {start:true, prompt});
+    $('cloud-model').textContent = data.model || 'Configured provider model';
+    $('live-activity').textContent = data.intent === 'CHAT'
+      ? 'Conversation response received'
+      : 'Proposed action: ' + (data.action || 'none');
+    $('live-decision').textContent = data.decision || 'NO DECISION';
+    $('live-reason').textContent = data.reason || 'No reason returned.';
+    $('result').textContent = 'AI RESPONSE\\n\\n' + (data.response || 'No response returned by provider.') +
+      '\\n\\nDECISION\\n' + (data.decision || 'UNKNOWN') +
+      '\\n\\nREASON\\n' + (data.reason || 'No reason returned.');
+    $('progress-bar').style.width = '100%';
+    $('monitor-time').textContent = 'REQUEST COMPLETE';
+    await refreshAll();
+  } catch (error) {
+    $('live-activity').textContent = 'Cloud request failed';
+    $('live-decision').textContent = 'No completed gate decision';
+    $('live-reason').textContent = String(error);
+    $('result').textContent = 'Cloud request failed: ' + error.message;
+    $('progress-bar').style.width = '0%';
+    $('monitor-time').textContent = 'REQUEST FAILED';
+  } finally {
+    busy = false;
+    if (runButton) runButton.disabled = false;
+  }
+}
+
+async function releaseAgent() {
+if (busy) return;
+  if (!confirm('Release the demo agent from quarantine? Saved safety rules remain.')) return;
+  busy = true;
+  try {
+    const data = await api('/api/release', {confirm:true});
+    $('result').textContent = data.message || 'Release request completed.';
+    await refreshAll();
+  } catch (error) {
+    $('result').textContent = 'Release failed: ' + error.message;
+  } finally {
+    busy = false;
+  }
+}
+
+// Subtle scroll-in motion for long documentation and dashboard sections.
+if ('IntersectionObserver' in window) {
+  const revealObserver = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('in-view');
+        revealObserver.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.12 });
+  document.querySelectorAll('.overview-info .card, .overview-brief, .gate-detail .feature, .about-grid .feature, .about-footer').forEach(el => {
+    el.classList.add('scroll-reveal');
+    revealObserver.observe(el);
+  });
+}
+</script>
+</body>
+</html>

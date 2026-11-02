@@ -1,0 +1,31 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Secrets and provider configuration
+.env
+.env.*
+!.env.example
+data/provider_config.json
+data/provider_config.json.tmp
+
+# Runtime state and generated data
+data/state.json
+data/state.json.tmp
+data/memory.json
+data/memory.json.tmp
+data/audit_chain.jsonl
+data/audit_chain.jsonl.tmp
+logs/
+*.log
+
+# Temporary and backup files
+*.tmp
+*.bak
+*~
