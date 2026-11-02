@@ -1,0 +1,5 @@
+# Netlify-only configuration. Ignored by the local Python server (web/server.py),
+# so running the project in Termux is unaffected.
+[build]
+  publish = "."
+  command = ""
