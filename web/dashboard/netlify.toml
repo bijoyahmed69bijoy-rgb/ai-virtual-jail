@@ -1,0 +1,3 @@
+# Serve the dashboard (this folder) at the site root.
+[build]
+  publish = "."
